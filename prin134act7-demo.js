@@ -1,8 +1,8 @@
 class Player {
     constructor(name, team) {
         this.name = name;
-        this.score = 0;
         this.team = team;
+        this.score = 0;
     }
 }
 
@@ -27,32 +27,37 @@ function isTie(players) {
     return players.filter(player => player.score === topScore).length > 1;
 }
 
-function resetTiedPlayersScores(players) {
+function getTiedPlayers(players) {
     const topScore = players[0].score;
+    return players.filter(player => player.score === topScore);
+}
+
+function resetTiedPlayersScores(players) {
     players.forEach(player => {
-        if (player.score === topScore) {
-            player.score = 0;
-        }
+        player.score = 0;
     });
 }
 
 function tieBreakerRound(players, attempts) {
-    console.log("🏀 Tie-breaker round! 🏀");
+    console.log("\n🔥 Tiebreaker needed between:", players.map(p => p.name).join(", "));
+    console.log("\n🏀 Round 2 Begins!");
     resetTiedPlayersScores(players);
     players.forEach(player => {
-        if (player.score === 0) {
-            shootBall(player, attempts);
-        }
+        shootBall(player, attempts);
+        console.log(`${player.name} (${player.team}) scored ${player.score} successful shots.`);
     });
 }
 
 function runGame() {
     const players = [
-        new Player("LeBron", "Lakers"),
+        new Player("James", "Lakers"),
         new Player("Curry", "Warriors"),
-        new Player("Durant", "Nets"),
+        new Player("Shai", "Thunder"),
+        new Player("Zion", "Pelicans"),
+        new Player("Durant", "Suns"),
         new Player("Giannis", "Bucks"),
-        new Player("Jokic", "Nuggets")
+        new Player("Kyrie", "Mavericks"),
+        new Player("Tatum", "Celtics")
     ];
 
     const attemptsPerRound = 5; 
@@ -61,18 +66,22 @@ function runGame() {
 
     let rankedPlayers = rankPlayers(players);
 
-    while (isTie(rankedPlayers)) {
-        tieBreakerRound(rankedPlayers, attemptsPerRound);
-        rankedPlayers = rankPlayers(rankedPlayers);
-    }
-
-
-    console.log("🏆 Final Rankings �");
+    console.log("\n🏆 Rankings after this round:");
     rankedPlayers.forEach((player, index) => {
-        console.log(`${index + 1}. ${player.name} (${player.team}) - Score: ${player.score}`);
+        console.log(`${index + 1}. ${player.name} (${player.team}) - ${player.score} points`);
     });
 
-    console.log(`\n🎉 Winner: ${rankedPlayers[0].name} ${String.fromCodePoint(0x1F3C6)}`);
+    while (isTie(rankedPlayers)) {
+        let tiedPlayers = getTiedPlayers(rankedPlayers);
+        tieBreakerRound(tiedPlayers, attemptsPerRound);
+        rankedPlayers = rankPlayers(tiedPlayers);
+        console.log("\n🏆 Rankings after this round:");
+        rankedPlayers.forEach((player, index) => {
+            console.log(`${index + 1}. ${player.name} (${player.team}) - ${player.score} points`);
+        });
+    }
+
+    console.log(`\n🏆 The champion is ${rankedPlayers[0].name} (${rankedPlayers[0].team}) with ${rankedPlayers[0].score} points!`);
 }
 
 runGame();

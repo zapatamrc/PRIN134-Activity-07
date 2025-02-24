@@ -38,9 +38,9 @@ function resetTiedPlayersScores(players) {
     });
 }
 
-function tieBreakerRound(players, attempts) {
-    console.log("\n🔥 Tiebreaker needed between:", players.map(p => p.name).join(", "));
-    console.log("\n🏀 Round 2 Begins!");
+function tieBreakerRound(players, attempts, roundNumber) {
+    console.log("\n", String.fromCodePoint(0x1F525), `Tiebreaker Round needed between:`, players.map(p => p.name).join(", "));
+    console.log("\n", String.fromCodePoint(0x1F3C0), `Round ${roundNumber+1} Begins!`);
     resetTiedPlayersScores(players);
     players.forEach(player => {
         shootBall(player, attempts);
@@ -66,22 +66,24 @@ function runGame() {
 
     let rankedPlayers = rankPlayers(players);
 
-    console.log("\n🏆 Rankings after this round:");
+    console.log(String.fromCodePoint(0x1F3C6), " Rankings after this round:");
     rankedPlayers.forEach((player, index) => {
         console.log(`${index + 1}. ${player.name} (${player.team}) - ${player.score} points`);
     });
 
+    let tieBreakerCount = 1;
     while (isTie(rankedPlayers)) {
         let tiedPlayers = getTiedPlayers(rankedPlayers);
-        tieBreakerRound(tiedPlayers, attemptsPerRound);
+        tieBreakerRound(tiedPlayers, attemptsPerRound, tieBreakerCount);
         rankedPlayers = rankPlayers(tiedPlayers);
-        console.log("\n🏆 Rankings after this round:");
+        console.log(String.fromCodePoint(0x1F3C6), " Rankings after this round:");
         rankedPlayers.forEach((player, index) => {
             console.log(`${index + 1}. ${player.name} (${player.team}) - ${player.score} points`);
         });
+        tieBreakerCount++;
     }
 
-    console.log(`\n🏆 The champion is ${rankedPlayers[0].name} (${rankedPlayers[0].team}) with ${rankedPlayers[0].score} points!`);
+    console.log(`\n${String.fromCodePoint(0x1F3C6)} The champion is ${rankedPlayers[0].name} (${rankedPlayers[0].team}) with ${rankedPlayers[0].score} points!`);
 }
 
 runGame();
